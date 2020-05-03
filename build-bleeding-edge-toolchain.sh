@@ -90,6 +90,8 @@ skipNanoLibraries="n"
 buildDocumentation="y"
 quiet="n"
 resume="n"
+skipArchive = "n"
+
 while [ "${#}" -gt 0 ]; do
 	case "${1}" in
 		--enable-win32)
@@ -109,6 +111,9 @@ while [ "${#}" -gt 0 ]; do
 			;;
 		--skip-nano-libraries)
 			skipNanoLibraries="y"
+			;;
+		--skip-archive)
+			skipArchive="y"
 			;;
 		--quiet)
 			quiet="y"
@@ -887,19 +892,21 @@ if [ "${buildDocumentation}" = "y" ]; then
 	find "${installNative}/share/doc" -mindepth 2 -name '*.pdf' -exec mv {} "${installNative}/share/doc" \;
 fi
 
-messageA "Package"
-tagFile="${top}/${buildNative}/package_generated"
-if [ ! -f "${tagFile}" ]; then
-	maybeDelete "${package}"
-	ln -s "${installNative}" "${package}"
-	maybeDelete "${packageArchiveNative}"
-	if [ "${uname}" = "Darwin" ]; then
-		XZ_OPT=${XZ_OPT-"-9e -v"} tar -cJf "${packageArchiveNative}" "${package}"/*
-	else
-		XZ_OPT=${XZ_OPT-"-9e -v"} tar -cJf "${packageArchiveNative}" --mtime='@0' --numeric-owner --group=0 --owner=0 "${package}"/*
+if [ "${skipArchive}" = "n" ]; then
+	messageA "Package"
+	tagFile="${top}/${buildNative}/package_generated"
+	if [ ! -f "${tagFile}" ]; then
+		maybeDelete "${package}"
+		ln -s "${installNative}" "${package}"
+		maybeDelete "${packageArchiveNative}"
+		if [ "${uname}" = "Darwin" ]; then
+			XZ_OPT=${XZ_OPT-"-9e -v"} tar -cJf "${packageArchiveNative}" "${package}"/*
+		else
+			XZ_OPT=${XZ_OPT-"-9e -v"} tar -cJf "${packageArchiveNative}" --mtime='@0' --numeric-owner --group=0 --owner=0 "${package}"/*
+		fi
+		maybeDelete "${package}"
+		touch "${tagFile}"
 	fi
-	maybeDelete "${package}"
-	touch "${tagFile}"
 fi
 
 if [ "${enableWin32}" = "y" ] || [ "${enableWin64}" = "y" ]; then

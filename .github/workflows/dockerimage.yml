@@ -1,0 +1,25 @@
+name: Build Image
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup tmate session
+      uses: mxschmitt/action-tmate@v2
+    - name: Login to DockerHub Registry
+      run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_LOGIN }} --password-stdin
+    - name: Get the version
+      id: vars
+      run: echo ::set-output name=version::$(echo ${GITHUB_REF} | cut -d / -f 3)
+    - name: Build the tagged Docker image
+      run: docker build . --file Dockerfile --tag federerer/bleeding-edge-toolchain:${{steps.vars.outputs.version}}
+    - name: Push the tagged Docker image
+      run: docker push federerer/bleeding-edge-toolchain:${{steps.vars.outputs.version}}
