@@ -90,7 +90,7 @@ skipNanoLibraries="n"
 buildDocumentation="y"
 quiet="n"
 resume="n"
-skipArchive = "n"
+skipArchive="n"
 
 while [ "${#}" -gt 0 ]; do
 	case "${1}" in
