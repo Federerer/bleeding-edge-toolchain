@@ -10,10 +10,14 @@ RUN export TERM=xterm \
 
 FROM alpine:3.11 as prod
 
-WORKDIR /home/dev
+ENV BIN_PATH /bleeding-edge-toolchain
+
+WORKDIR ${BIN_PATH}
+
+ENV PATH "$PATH:${BIN_PATH}/bin}"
 
 COPY --from=build installNative .
 
-ENV PATH $PATH:bin
+WORKDIR /build
 
 CMD [ "arm-none-eabi-gcc", "--version" ]
