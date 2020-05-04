@@ -8,7 +8,7 @@ COPY build-bleeding-edge-toolchain.sh .
 RUN export TERM=xterm \
 && sh build-bleeding-edge-toolchain.sh --skip-documentation --skip-archive --quiet
 
-FROM build as prod
+FROM alpine:3.11 as prod
 
 WORKDIR /home/dev
 
