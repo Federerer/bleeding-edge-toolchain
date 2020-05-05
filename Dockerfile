@@ -14,7 +14,7 @@ ENV BIN_PATH /bleeding-edge-toolchain
 
 WORKDIR ${BIN_PATH}
 
-ENV PATH "$PATH:${BIN_PATH}/bin}"
+ENV PATH "$PATH:${BIN_PATH}/bin"
 
 COPY --from=build installNative .
 
