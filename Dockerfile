@@ -10,6 +10,9 @@ RUN export TERM=xterm \
 
 FROM alpine:3.11 as prod
 
+RUN apk update \
+&& apk add make
+
 ENV BIN_PATH /bleeding-edge-toolchain
 
 WORKDIR ${BIN_PATH}
