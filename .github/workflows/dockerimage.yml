@@ -22,3 +22,5 @@ jobs:
       run: docker build . --file Dockerfile --tag federerer/bleeding-edge-toolchain:${{steps.vars.outputs.version}}
     - name: Push the tagged Docker image
       run: docker push federerer/bleeding-edge-toolchain:${{steps.vars.outputs.version}}
+    - name: Push the latest Docker image
+      run: docker push federerer/bleeding-edge-toolchain:latest
