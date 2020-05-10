@@ -1,0 +1,28 @@
+name: Build Alpine
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, '[skip-ci]')"
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Login to DockerHub Registry
+      run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_LOGIN }} --password-stdin
+    - name: Get the version
+      id: vars
+      run: echo ::set-output name=version::$(echo ${GITHUB_REF} | cut -d / -f 3)
+    - name: Build the tagged Docker image
+      run: docker build -t federerer/bleeding-edge-toolchain:alpine-${{steps.vars.outputs.version}} -t federerer/bleeding-edge-toolchain:alpine -t federerer/bleeding-edge-toolchain:latest ./alpine/Dockerfile
+    - name: Push the tagged Docker image
+      run: |
+        docker push federerer/bleeding-edge-toolchain:alpine-${{steps.vars.outputs.version}}
+        docker push federerer/bleeding-edge-toolchain:alpine
+    - name: Push the latest Docker image
+      run: docker push federerer/bleeding-edge-toolchain:latest
