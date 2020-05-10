@@ -19,7 +19,7 @@ jobs:
       id: vars
       run: echo ::set-output name=version::$(echo ${GITHUB_REF} | cut -d / -f 3)
     - name: Build the tagged Docker image
-      run: docker build . --file Dockerfile --tag federerer/bleeding-edge-toolchain:${{steps.vars.outputs.version}}
+      run: docker build -t federerer/bleeding-edge-toolchain:${{steps.vars.outputs.version}} -t federerer/bleeding-edge-toolchain:latest
     - name: Push the tagged Docker image
       run: docker push federerer/bleeding-edge-toolchain:${{steps.vars.outputs.version}}
     - name: Push the latest Docker image
